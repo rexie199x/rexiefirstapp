@@ -115,7 +115,7 @@ def show_processes(section):
         with expander:
             st.write(process['content'])
 
-            col1, col2 = st.columns(2)
+            col1, col2 = st.columns([1, 1])
             with col1:
                 if st.button("Edit", key=f"edit_{section}_{i}"):
                     st.session_state[f"edit_mode_{section}_{i}"] = True
@@ -127,11 +127,13 @@ def show_processes(section):
                     st.experimental_rerun()
 
             if st.session_state.get(f"edit_mode_{section}_{i}", False):
+                new_title = st.text_input(f"Edit title for {process['title']}", process['title'], key=f"title_{section}_{i}")
                 new_content = st.text_area(f"Edit content for {process['title']}", process['content'], key=f"content_{section}_{i}")
                 if st.button(f"Save {process['title']}", key=f"save_{section}_{i}"):
+                    st.session_state.processes_data[section][i]['title'] = new_title
                     st.session_state.processes_data[section][i]['content'] = new_content
                     st.session_state[f"edit_mode_{section}_{i}"] = False
-                    st.success(f"Saved content for {process['title']}")
+                    st.success(f"Saved changes for {process['title']}")
                     st.experimental_rerun()
 
     # Add new process
