@@ -45,12 +45,6 @@ a.link-button:hover {
 </style>
 """
 
-# Function to apply the selected theme
-def apply_theme(theme):
-    if theme == "Dark":
-        st.markdown(dark_theme_css, unsafe_allow_html=True)
-    else:
-        st.markdown(light_theme_css, unsafe_allow_html=True)
 
 # File path for storing the processes data
 data_file = "processes_data.json"
