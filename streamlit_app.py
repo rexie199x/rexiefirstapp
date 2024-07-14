@@ -95,19 +95,21 @@ def show_processes(section):
 
     # Display processes
     for i, process in enumerate(processes):
-        if st.checkbox(f"Edit {process['title']}", key=f"edit_{section}_{i}"):
-            new_content = st.text_area(f"Edit content for {process['title']}", process['content'], key=f"content_{section}_{i}")
-            if st.button(f"Save {process['title']}", key=f"save_{section}_{i}"):
-                processes_data[section][i]['content'] = new_content
-                st.success(f"Saved content for {process['title']}")
-        if st.button(f"Delete {process['title']}", key=f"delete_{section}_{i}"):
-            processes.pop(i)
-            processes_data[section] = processes
-            st.success(f"Deleted {process['title']}")
-            st.experimental_rerun()
-        else:
-            st.write(f"**{process['title']}**")
-            st.write(process['content'])
+        expander = st.expander(f"{process['title']}", expanded=False)
+        with expander:
+            if st.checkbox(f"Edit {process['title']}", key=f"edit_{section}_{i}"):
+                new_content = st.text_area(f"Edit content for {process['title']}", process['content'], key=f"content_{section}_{i}")
+                if st.button(f"Save {process['title']}", key=f"save_{section}_{i}"):
+                    processes_data[section][i]['content'] = new_content
+                    st.success(f"Saved content for {process['title']}")
+                    st.experimental_rerun()
+            if st.button(f"Delete {process['title']}", key=f"delete_{section}_{i}"):
+                processes.pop(i)
+                processes_data[section] = processes
+                st.success(f"Deleted {process['title']}")
+                st.experimental_rerun()
+            else:
+                st.write(process['content'])
 
     # Add new process
     st.write("### Add New Process")
