@@ -57,6 +57,7 @@ processes_data = {
 
 # Function to display the home page
 def show_home():
+    st.title("Welcome to the Knowledge Base")
 
     # Display the saved image if exists
     try:
@@ -78,7 +79,7 @@ def show_home():
                     f.write(uploaded_file.getbuffer())
                 st.success("Logo uploaded successfully!")
 
-    st.write("This manual outlines the key processes and timelines for the successful execution of our program. Our goal is to deliver high-quality education and support to our students while ensuring the financial sustainability of the program.")
+    st.write("Select a section from the sidebar to get started.")
 
 # Function to display processes for each section
 def show_processes(section):
@@ -99,6 +100,11 @@ def show_processes(section):
             if st.button(f"Save {process['title']}", key=f"save_{section}_{i}"):
                 processes_data[section][i]['content'] = new_content
                 st.success(f"Saved content for {process['title']}")
+        if st.button(f"Delete {process['title']}", key=f"delete_{section}_{i}"):
+            processes.pop(i)
+            processes_data[section] = processes
+            st.success(f"Deleted {process['title']}")
+            st.experimental_rerun()
         else:
             st.write(f"**{process['title']}**")
             st.write(process['content'])
@@ -112,11 +118,9 @@ def show_processes(section):
             processes.append({"title": new_process_title, "content": new_process_content})
             processes_data[section] = processes
             st.success("New process added successfully!")
-
-    # Display updated processes
-    for i, process in enumerate(processes):
-        st.write(f"**{process['title']}**")
-        st.write(process['content'])
+            st.experimental_rerun()
+        else:
+            st.error("Please provide both title and content for the new process.")
 
 # Main function to run the app
 def main():
