@@ -72,6 +72,12 @@ if 'processes_data' not in st.session_state:
         ]
     }
 
+# Initialize new process fields in session state
+if 'new_process_title' not in st.session_state:
+    st.session_state.new_process_title = ""
+if 'new_process_content' not in st.session_state:
+    st.session_state.new_process_content = ""
+
 # Function to display the home page
 def show_home():
 
@@ -149,15 +155,15 @@ def show_processes(section):
 
     # Add new process
     st.write("### Add New Process")
-    new_process_title = st.text_input("New Process Title", key=f"new_title_{section}")
-    new_process_content = st.text_area("New Process Content", key=f"new_content_{section}")
+    st.session_state.new_process_title = st.text_input("New Process Title", key=f"new_title_{section}")
+    st.session_state.new_process_content = st.text_area("New Process Content", key=f"new_content_{section}")
     if st.button("Add Process", key=f"add_{section}"):
-        if new_process_title and new_process_content:
-            processes.append({"title": new_process_title, "content": new_process_content})
+        if st.session_state.new_process_title and st.session_state.new_process_content:
+            processes.append({"title": st.session_state.new_process_title, "content": st.session_state.new_process_content})
             st.session_state.processes_data[section] = processes
             # Clear the input fields after adding the process
-            st.session_state[f"new_title_{section}"] = ""
-            st.session_state[f"new_content_{section}"] = ""
+            st.session_state.new_process_title = ""
+            st.session_state.new_process_content = ""
             st.success("New process added successfully!")
             st.experimental_rerun()
         else:
