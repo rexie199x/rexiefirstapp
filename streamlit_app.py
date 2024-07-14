@@ -109,10 +109,14 @@ def show_processes(section):
     new_process_content = st.text_area("New Process Content", key=f"new_content_{section}")
     if st.button("Add Process", key=f"add_{section}"):
         if new_process_title and new_process_content:
-            processes_data[section].append({"title": new_process_title, "content": new_process_content})
+            processes.append({"title": new_process_title, "content": new_process_content})
+            processes_data[section] = processes
             st.success("New process added successfully!")
-        else:
-            st.error("Please provide both title and content for the new process.")
+
+    # Display updated processes
+    for i, process in enumerate(processes):
+        st.write(f"**{process['title']}**")
+        st.write(process['content'])
 
 # Main function to run the app
 def main():
