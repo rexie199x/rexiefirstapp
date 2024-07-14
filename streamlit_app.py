@@ -147,7 +147,7 @@ def show_processes(section):
 def main():
     st.sidebar.title("Menu")
     
-    menu_options = ["Home", "Discord", "Pre-Onboarding", "Program Proper", "Post-Program", "Timelines"]
+    menu_options = ["Home", "Discord", "Pre-Program", "Program Proper", "Post-Program", "Timelines"]
     choice = st.sidebar.radio("Go to", menu_options)
 
     if choice == "Home":
