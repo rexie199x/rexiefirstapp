@@ -58,7 +58,6 @@ processes_data = {
 # Function to display the home page
 def show_home():
     # Upload logo section
-    st.write("### Upload Company Logo")
     uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg", "jpeg"])
     if uploaded_file is not None:
         # Display the uploaded image
