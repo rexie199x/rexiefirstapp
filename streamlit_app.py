@@ -57,8 +57,6 @@ processes_data = {
 
 # Function to display the home page
 def show_home():
-    st.title("Welcome to the Knowledge Base")
-    
     # Upload logo section
     st.write("### Upload Company Logo")
     uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg", "jpeg"])
@@ -78,6 +76,7 @@ def show_home():
         except FileNotFoundError:
             st.write("No logo uploaded yet. Please upload a logo.")
 
+    st.title("Welcome to the Knowledge Base")
     st.write("Select a section from the sidebar to get started.")
 
 # Function to display processes for each section
