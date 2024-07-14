@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
-import io
+import json
+import os
 
 # Custom CSS for dark and light themes
 dark_theme_css = """
@@ -51,9 +52,15 @@ def apply_theme(theme):
     else:
         st.markdown(light_theme_css, unsafe_allow_html=True)
 
-# Initialize the processes data in session state
-if 'processes_data' not in st.session_state:
-    st.session_state.processes_data = {
+# File path for storing the processes data
+data_file = "processes_data.json"
+
+# Function to load processes data from the JSON file
+def load_processes_data():
+    if os.path.exists(data_file):
+        with open(data_file, "r") as file:
+            return json.load(file)
+    return {
         "Discord": [
             {"title": "Process 1", "content": "Content for process 1"},
             {"title": "Process 2", "content": "Content for process 2"},
@@ -71,6 +78,15 @@ if 'processes_data' not in st.session_state:
             {"title": "Process 2", "content": "Content for process 2"},
         ]
     }
+
+# Function to save processes data to the JSON file
+def save_processes_data(data):
+    with open(data_file, "w") as file:
+        json.dump(data, file)
+
+# Initialize the processes data in session state
+if 'processes_data' not in st.session_state:
+    st.session_state.processes_data = load_processes_data()
 
 # Initialize new process fields in session state
 if 'new_process_title' not in st.session_state:
@@ -136,6 +152,7 @@ def show_processes(section):
                     st.session_state.processes_data[section][i]['title'] = new_title
                     st.session_state.processes_data[section][i]['content'] = new_content
                     st.session_state[f"edit_mode_{section}_{i}"] = False
+                    save_processes_data(st.session_state.processes_data)  # Save changes
                     st.success(f"Saved changes for {process['title']}")
                     st.experimental_rerun()
 
@@ -147,6 +164,7 @@ def show_processes(section):
                         processes.pop(i)
                         st.session_state.processes_data[section] = processes
                         st.session_state[f"confirm_delete_{section}_{i}"] = False
+                        save_processes_data(st.session_state.processes_data)  # Save changes
                         st.success(f"Deleted {process['title']}")
                         st.experimental_rerun()
                 with col2:
@@ -164,6 +182,7 @@ def show_processes(section):
             # Clear the input fields after adding the process
             st.session_state.new_process_title = ""
             st.session_state.new_process_content = ""
+            save_processes_data(st.session_state.processes_data)  # Save changes
             st.success("New process added successfully!")
             st.experimental_rerun()
         else:
