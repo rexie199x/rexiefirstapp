@@ -35,25 +35,26 @@ def apply_theme(theme):
     else:
         st.markdown(light_theme_css, unsafe_allow_html=True)
 
-# Example list of processes
-processes_data = {
-    "Discord": [
-        {"title": "Process 1", "content": "Content for process 1"},
-        {"title": "Process 2", "content": "Content for process 2"},
-        {"title": "Process 3", "content": "Content for process 3"},
-    ],
-    "Pre-Onboarding": [
-        {"title": "Process 1", "content": "Content for process 1"},
-        {"title": "Process 2", "content": "Content for process 2"},
-    ],
-    "Program Proper": [
-        {"title": "Process 1", "content": "Content for process 1"},
-    ],
-    "Post-Program": [
-        {"title": "Process 1", "content": "Content for process 1"},
-        {"title": "Process 2", "content": "Content for process 2"},
-    ]
-}
+# Initialize the processes data in session state
+if 'processes_data' not in st.session_state:
+    st.session_state.processes_data = {
+        "Discord": [
+            {"title": "Process 1", "content": "Content for process 1"},
+            {"title": "Process 2", "content": "Content for process 2"},
+            {"title": "Process 3", "content": "Content for process 3"},
+        ],
+        "Pre-Onboarding": [
+            {"title": "Process 1", "content": "Content for process 1"},
+            {"title": "Process 2", "content": "Content for process 2"},
+        ],
+        "Program Proper": [
+            {"title": "Process 1", "content": "Content for process 1"},
+        ],
+        "Post-Program": [
+            {"title": "Process 1", "content": "Content for process 1"},
+            {"title": "Process 2", "content": "Content for process 2"},
+        ]
+    }
 
 # Function to display the home page
 def show_home():
@@ -86,7 +87,7 @@ def show_processes(section):
     st.title(f"{section} Processes")
     st.write(f"List of processes for {section} will be shown here.")
     
-    processes = processes_data.get(section, [])
+    processes = st.session_state.processes_data.get(section, [])
 
     # Search bar
     search_query = st.text_input("Search for an article:")
@@ -100,12 +101,12 @@ def show_processes(section):
             if st.checkbox(f"Edit {process['title']}", key=f"edit_{section}_{i}"):
                 new_content = st.text_area(f"Edit content for {process['title']}", process['content'], key=f"content_{section}_{i}")
                 if st.button(f"Save {process['title']}", key=f"save_{section}_{i}"):
-                    processes_data[section][i]['content'] = new_content
+                    st.session_state.processes_data[section][i]['content'] = new_content
                     st.success(f"Saved content for {process['title']}")
                     st.experimental_rerun()
             if st.button(f"Delete {process['title']}", key=f"delete_{section}_{i}"):
                 processes.pop(i)
-                processes_data[section] = processes
+                st.session_state.processes_data[section] = processes
                 st.success(f"Deleted {process['title']}")
                 st.experimental_rerun()
             else:
@@ -118,7 +119,7 @@ def show_processes(section):
     if st.button("Add Process", key=f"add_{section}"):
         if new_process_title and new_process_content:
             processes.append({"title": new_process_title, "content": new_process_content})
-            processes_data[section] = processes
+            st.session_state.processes_data[section] = processes
             st.success("New process added successfully!")
             st.experimental_rerun()
         else:
