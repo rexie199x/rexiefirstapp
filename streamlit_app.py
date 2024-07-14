@@ -98,19 +98,24 @@ def show_processes(section):
     for i, process in enumerate(processes):
         expander = st.expander(f"{process['title']}", expanded=False)
         with expander:
-            if st.checkbox(f"Edit {process['title']}", key=f"edit_{section}_{i}"):
+            st.write(process['content'])
+
+            edit_link = f'<a href="#" id="edit_{section}_{i}">Edit</a>'
+            delete_link = f'<a href="#" id="delete_{section}_{i}">Delete</a>'
+            st.markdown(f"{edit_link} | {delete_link}", unsafe_allow_html=True)
+
+            if f"edit_{section}_{i}" in st.session_state and st.session_state[f"edit_{section}_{i}"]:
                 new_content = st.text_area(f"Edit content for {process['title']}", process['content'], key=f"content_{section}_{i}")
                 if st.button(f"Save {process['title']}", key=f"save_{section}_{i}"):
                     st.session_state.processes_data[section][i]['content'] = new_content
                     st.success(f"Saved content for {process['title']}")
                     st.experimental_rerun()
-            if st.button(f"Delete {process['title']}", key=f"delete_{section}_{i}"):
+
+            if f"delete_{section}_{i}" in st.session_state and st.session_state[f"delete_{section}_{i}"]:
                 processes.pop(i)
                 st.session_state.processes_data[section] = processes
                 st.success(f"Deleted {process['title']}")
                 st.experimental_rerun()
-            else:
-                st.write(process['content'])
 
     # Add new process
     st.write("### Add New Process")
@@ -124,6 +129,10 @@ def show_processes(section):
             st.experimental_rerun()
         else:
             st.error("Please provide both title and content for the new process.")
+
+# Function to handle JavaScript click events
+def handle_js_click_events():
+    st.write('<script>document.querySelectorAll("a").forEach(a => a.onclick = (e) => {e.preventDefault(); window.parent.postMessage(a.id, "*");})</script>', unsafe_allow_html=True)
 
 # Main function to run the app
 def main():
@@ -140,6 +149,14 @@ def main():
         show_home()
     else:
         show_processes(choice)
+
+    handle_js_click_events()
+
+    # JavaScript message handling
+    js_msg = st.experimental_get_query_params().get("js_msg", [""])[0]
+    if js_msg:
+        st.session_state[js_msg] = True
+        st.experimental_rerun()
 
 if __name__ == "__main__":
     main()
