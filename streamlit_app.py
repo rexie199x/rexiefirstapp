@@ -117,7 +117,7 @@ def show_home():
                     f.write(uploaded_file.getbuffer())
                 st.success("Logo uploaded successfully!")
 
-    st.write("This manual outlines the key processes and timelines for the successful execution of our program. Our goal is to deliver high-quality education and support to our students while ensuring the financial sustainability of the program.")
+    st.write("This manual outlines the key processes and timelines for the successful execution of our program. ")
 
 # Function to display processes for each section
 def show_processes(section):
