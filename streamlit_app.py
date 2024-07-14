@@ -74,6 +74,7 @@ if 'processes_data' not in st.session_state:
 
 # Function to display the home page
 def show_home():
+    st.title("Welcome to the Knowledge Base")
 
     # Display the saved image if exists
     try:
@@ -95,7 +96,7 @@ def show_home():
                     f.write(uploaded_file.getbuffer())
                 st.success("Logo uploaded successfully!")
 
-    st.write("This manual outlines the key processes and timelines for the successful execution of our program. Our goal is to deliver high-quality education and support to our students while ensuring the financial sustainability of the program.")
+    st.write("Select a section from the sidebar to get started.")
 
 # Function to display processes for each section
 def show_processes(section):
@@ -115,16 +116,13 @@ def show_processes(section):
         with expander:
             st.write(process['content'])
 
-            col1, col2 = st.columns([1, 1])
+            col1, col2, col3 = st.columns([1, 1, 6])
             with col1:
                 if st.button("Edit", key=f"edit_{section}_{i}"):
                     st.session_state[f"edit_mode_{section}_{i}"] = True
             with col2:
                 if st.button("Delete", key=f"delete_{section}_{i}"):
-                    processes.pop(i)
-                    st.session_state.processes_data[section] = processes
-                    st.success(f"Deleted {process['title']}")
-                    st.experimental_rerun()
+                    st.session_state[f"confirm_delete_{section}_{i}"] = True
 
             if st.session_state.get(f"edit_mode_{section}_{i}", False):
                 new_title = st.text_input(f"Edit title for {process['title']}", process['title'], key=f"title_{section}_{i}")
@@ -135,6 +133,20 @@ def show_processes(section):
                     st.session_state[f"edit_mode_{section}_{i}"] = False
                     st.success(f"Saved changes for {process['title']}")
                     st.experimental_rerun()
+
+            if st.session_state.get(f"confirm_delete_{section}_{i}", False):
+                st.warning(f"Are you sure you want to delete {process['title']}?")
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button(f"Yes, delete {process['title']}", key=f"confirm_yes_{section}_{i}"):
+                        processes.pop(i)
+                        st.session_state.processes_data[section] = processes
+                        st.session_state[f"confirm_delete_{section}_{i}"] = False
+                        st.success(f"Deleted {process['title']}")
+                        st.experimental_rerun()
+                with col2:
+                    if st.button("No, cancel", key=f"confirm_no_{section}_{i}"):
+                        st.session_state[f"confirm_delete_{section}_{i}"] = False
 
     # Add new process
     st.write("### Add New Process")
