@@ -196,7 +196,7 @@ def main():
     theme = st.sidebar.selectbox("Select Theme", ["Light", "Dark"])
     apply_theme(theme)
     
-    menu_options = ["Home", "Discord", "Pre-Onboarding", "Program Proper", "Post-Program"]
+    menu_options = ["Home", "Discord", "Pre-Program", "Program Proper", "Post-Program"]
     choice = st.sidebar.radio("Go to", menu_options)
 
     if choice == "Home":
