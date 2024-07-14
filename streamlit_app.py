@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+from PIL import Image
+import io
 
 # Custom CSS for dark and light themes
 dark_theme_css = """
@@ -55,8 +57,28 @@ processes_data = {
 
 # Function to display the home page
 def show_home():
-    st.title("The Lonely Octopus Manual")
-    st.write("This manual outlines the key processes and timelines for the successful execution of our program. Our goal is to deliver high-quality education and support to our students while ensuring the financial sustainability of the program.")
+    st.title("Welcome to the Knowledge Base")
+    
+    # Upload logo section
+    st.write("### Upload Company Logo")
+    uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg", "jpeg"])
+    if uploaded_file is not None:
+        # Display the uploaded image
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Company Logo", use_column_width=True)
+        # Save the image
+        with open("company_logo.png", "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        st.success("Logo uploaded successfully!")
+    else:
+        # Display the saved image if exists
+        try:
+            image = Image.open("company_logo.png")
+            st.image(image, caption="Company Logo", use_column_width=True)
+        except FileNotFoundError:
+            st.write("No logo uploaded yet. Please upload a logo.")
+
+    st.write("Select a section from the sidebar to get started.")
 
 # Function to display processes for each section
 def show_processes(section):
