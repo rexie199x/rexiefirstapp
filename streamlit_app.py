@@ -4,9 +4,6 @@ from PIL import Image
 import json
 import os
 
-
-
-
 # File path for storing the processes data
 data_file = "processes_data.json"
 
@@ -31,6 +28,9 @@ def load_processes_data():
         "Post-Program": [
             {"title": "Process 1", "content": "Content for process 1"},
             {"title": "Process 2", "content": "Content for process 2"},
+        ],
+        "Timelines": [
+            {"title": "Timeline 1", "content": "Content for timeline 1"},
         ]
     }
 
@@ -72,7 +72,7 @@ def show_home():
                     f.write(uploaded_file.getbuffer())
                 st.success("Logo uploaded successfully!")
 
-    st.write("This manual outlines the key processes and timelines for the successful execution of our program. ")
+    st.write("This manual outlines the key processes and timelines for the successful execution of our program.")
 
 # Function to display processes for each section
 def show_processes(section):
@@ -147,11 +147,7 @@ def show_processes(section):
 def main():
     st.sidebar.title("Menu")
     
-    # Theme selection
-    theme = st.sidebar.selectbox("Select Theme", ["Light", "Dark"])
-    apply_theme(theme)
-    
-    menu_options = ["Home", "Discord", "Pre-Program", "Program Proper", "Post-Program"]
+    menu_options = ["Home", "Discord", "Pre-Onboarding", "Program Proper", "Post-Program", "Timelines"]
     choice = st.sidebar.radio("Go to", menu_options)
 
     if choice == "Home":
