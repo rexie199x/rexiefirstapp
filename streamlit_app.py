@@ -3,8 +3,8 @@ import pandas as pd
 
 # Function to display the home page
 def show_home():
-    st.title("Welcome to the Knowledge Base")
-    st.write("Select a section from the sidebar to get started.")
+    st.title("The Lonely Octopus Operations Manual")
+    st.write("Welcome to the Operations Manual for the 2024 Lonely Octopus Program. This manual outlines the key processes and timelines for the successful execution of our program. Our goal is to deliver high-quality education and support to our students while ensuring the financial sustainability of the program.")
 
 # Function to display processes for each section
 def show_processes(section):
