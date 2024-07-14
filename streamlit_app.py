@@ -75,7 +75,6 @@ if 'processes_data' not in st.session_state:
 # Function to display the home page
 def show_home():
 
-
     # Display the saved image if exists
     try:
         image = Image.open("company_logo.png")
@@ -156,6 +155,9 @@ def show_processes(section):
         if new_process_title and new_process_content:
             processes.append({"title": new_process_title, "content": new_process_content})
             st.session_state.processes_data[section] = processes
+            # Clear the input fields after adding the process
+            st.session_state[f"new_title_{section}"] = ""
+            st.session_state[f"new_content_{section}"] = ""
             st.success("New process added successfully!")
             st.experimental_rerun()
         else:
