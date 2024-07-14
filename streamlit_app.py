@@ -65,17 +65,18 @@ def show_home():
     except FileNotFoundError:
         st.write("No logo uploaded yet. Please upload a logo.")
 
-    # Upload logo section
-    with st.expander("Upload Company Logo"):
-        uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg", "jpeg"])
-        if uploaded_file is not None:
-            # Display the uploaded image
-            image = Image.open(uploaded_file)
-            st.image(image, caption="Company Logo", use_column_width=True)
-            # Save the image
-            with open("company_logo.png", "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            st.success("Logo uploaded successfully!")
+    # Discreet button to reveal upload section
+    if st.button("Upload New Logo"):
+        with st.expander("Upload Company Logo"):
+            uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg", "jpeg"])
+            if uploaded_file is not None:
+                # Display the uploaded image
+                image = Image.open(uploaded_file)
+                st.image(image, caption="Company Logo", use_column_width=True)
+                # Save the image
+                with open("company_logo.png", "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                st.success("Logo uploaded successfully!")
 
     st.write("This manual outlines the key processes and timelines for the successful execution of our program. Our goal is to deliver high-quality education and support to our students while ensuring the financial sustainability of the program.")
 
