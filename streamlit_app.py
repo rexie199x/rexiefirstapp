@@ -36,7 +36,7 @@ def show_processes(section):
 
 # Main function to run the app
 def main():
-    st.sidebar.title("Menu")
+    st.sidebar.title("Operations Manual")
     menu_options = ["Home", "Discord", "Pre-Onboarding", "Program Proper", "Post-Program"]
     choice = st.sidebar.radio("Go to", menu_options)
 
