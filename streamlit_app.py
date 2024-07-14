@@ -4,46 +4,7 @@ from PIL import Image
 import json
 import os
 
-# Custom CSS for dark and light themes
-dark_theme_css = """
-<style>
-body {
-    background-color: #2E2E2E;
-    color: white;
-}
-.sidebar .sidebar-content {
-    background-color: #3E3E3E;
-}
-a.link-button {
-    color: white;
-    text-decoration: none;
-    cursor: pointer;
-}
-a.link-button:hover {
-    text-decoration: underline;
-}
-</style>
-"""
 
-light_theme_css = """
-<style>
-body {
-    background-color: #FFFFFF;
-    color: black;
-}
-.sidebar .sidebar-content {
-    background-color: #F8F9FA;
-}
-a.link-button {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-a.link-button:hover {
-    text-decoration: underline;
-}
-</style>
-"""
 
 
 # File path for storing the processes data
