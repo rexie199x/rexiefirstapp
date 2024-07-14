@@ -57,25 +57,27 @@ processes_data = {
 
 # Function to display the home page
 def show_home():
-    # Upload logo section
-    uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg", "jpeg"])
-    if uploaded_file is not None:
-        # Display the uploaded image
-        image = Image.open(uploaded_file)
-        st.image(image, caption="Company Logo", use_column_width=True)
-        # Save the image
-        with open("company_logo.png", "wb") as f:
-            f.write(uploaded_file.getbuffer())
-        st.success("Logo uploaded successfully!")
-    else:
-        # Display the saved image if exists
-        try:
-            image = Image.open("company_logo.png")
-            st.image(image, caption="Company Logo", use_column_width=True)
-        except FileNotFoundError:
-            st.write("No logo uploaded yet. Please upload a logo.")
-
     st.title("Welcome to the Knowledge Base")
+
+    # Display the saved image if exists
+    try:
+        image = Image.open("company_logo.png")
+        st.image(image, caption="Company Logo", use_column_width=True)
+    except FileNotFoundError:
+        st.write("No logo uploaded yet. Please upload a logo.")
+
+    # Upload logo section
+    with st.expander("Upload Company Logo"):
+        uploaded_file = st.file_uploader("Choose a file", type=["png", "jpg", "jpeg"])
+        if uploaded_file is not None:
+            # Display the uploaded image
+            image = Image.open(uploaded_file)
+            st.image(image, caption="Company Logo", use_column_width=True)
+            # Save the image
+            with open("company_logo.png", "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            st.success("Logo uploaded successfully!")
+
     st.write("Select a section from the sidebar to get started.")
 
 # Function to display processes for each section
