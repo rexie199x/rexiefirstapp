@@ -8,8 +8,8 @@ import os
 def get_db_connection():
     return psycopg2.connect(
         dbname="processes_db",
-        user="your_username",
-        password="your_password",
+        user="postgres",
+        password="LOctopus",
         host="localhost"
     )
 
