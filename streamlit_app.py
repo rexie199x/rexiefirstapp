@@ -1,43 +1,62 @@
 import streamlit as st
 import pandas as pd
 from PIL import Image
-import json
+import psycopg2
 import os
 
-# File path for storing the processes data
-data_file = "processes_data.json"
+# Database connection
+def get_db_connection():
+    return psycopg2.connect(
+        dbname="processes_db",
+        user="your_username",
+        password="your_password",
+        host="localhost"
+    )
 
-# Function to load processes data from the JSON file
+# Function to load processes data from the database
 def load_processes_data():
-    if os.path.exists(data_file):
-        with open(data_file, "r") as file:
-            return json.load(file)
-    return {
-        "Discord": [
-            {"title": "Process 1", "content": "Content for process 1"},
-            {"title": "Process 2", "content": "Content for process 2"},
-            {"title": "Process 3", "content": "Content for process 3"},
-        ],
-        "Pre-Onboarding": [
-            {"title": "Process 1", "content": "Content for process 1"},
-            {"title": "Process 2", "content": "Content for process 2"},
-        ],
-        "Program Proper": [
-            {"title": "Process 1", "content": "Content for process 1"},
-        ],
-        "Post-Program": [
-            {"title": "Process 1", "content": "Content for process 1"},
-            {"title": "Process 2", "content": "Content for process 2"},
-        ],
-        "Timelines": [
-            {"title": "Timeline 1", "content": "Content for timeline 1"},
-        ]
-    }
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT section, title, content FROM processes")
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
 
-# Function to save processes data to the JSON file
-def save_processes_data(data):
-    with open(data_file, "w") as file:
-        json.dump(data, file)
+    data = {}
+    for row in rows:
+        section, title, content = row
+        if section not in data:
+            data[section] = []
+        data[section].append({"title": title, "content": content})
+    return data
+
+# Function to save a new process to the database
+def save_new_process(section, title, content):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO processes (section, title, content) VALUES (%s, %s, %s)", (section, title, content))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+# Function to update an existing process in the database
+def update_process(section, old_title, new_title, new_content):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("UPDATE processes SET title = %s, content = %s WHERE section = %s AND title = %s",
+                (new_title, new_content, section, old_title))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+# Function to delete a process from the database
+def delete_process(section, title):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM processes WHERE section = %s AND title = %s", (section, title))
+    conn.commit()
+    cur.close()
+    conn.close()
 
 # Initialize the processes data in session state
 if 'processes_data' not in st.session_state:
@@ -51,7 +70,6 @@ if 'new_process_content' not in st.session_state:
 
 # Function to display the home page
 def show_home():
-
     # Display the saved image if exists
     try:
         image = Image.open("company_logo.png")
@@ -104,10 +122,9 @@ def show_processes(section):
                 new_title = st.text_input(f"Edit title for {process['title']}", process['title'], key=f"title_{section}_{i}")
                 new_content = st.text_area(f"Edit content for {process['title']}", process['content'], key=f"content_{section}_{i}")
                 if st.button(f"Save {process['title']}", key=f"save_{section}_{i}"):
-                    st.session_state.processes_data[section][i]['title'] = new_title
-                    st.session_state.processes_data[section][i]['content'] = new_content
+                    update_process(section, process['title'], new_title, new_content)
+                    st.session_state.processes_data = load_processes_data()
                     st.session_state[f"edit_mode_{section}_{i}"] = False
-                    save_processes_data(st.session_state.processes_data)  # Save changes
                     st.success(f"Saved changes for {process['title']}")
                     st.experimental_rerun()
 
@@ -116,10 +133,9 @@ def show_processes(section):
                 col1, col2 = st.columns(2)
                 with col1:
                     if st.button(f"Yes, delete {process['title']}", key=f"confirm_yes_{section}_{i}"):
-                        processes.pop(i)
-                        st.session_state.processes_data[section] = processes
+                        delete_process(section, process['title'])
+                        st.session_state.processes_data = load_processes_data()
                         st.session_state[f"confirm_delete_{section}_{i}"] = False
-                        save_processes_data(st.session_state.processes_data)  # Save changes
                         st.success(f"Deleted {process['title']}")
                         st.experimental_rerun()
                 with col2:
@@ -132,12 +148,11 @@ def show_processes(section):
     st.session_state.new_process_content = st.text_area("New Process Content", key=f"new_content_{section}")
     if st.button("Add Process", key=f"add_{section}"):
         if st.session_state.new_process_title and st.session_state.new_process_content:
-            processes.append({"title": st.session_state.new_process_title, "content": st.session_state.new_process_content})
-            st.session_state.processes_data[section] = processes
+            save_new_process(section, st.session_state.new_process_title, st.session_state.new_process_content)
+            st.session_state.processes_data = load_processes_data()
             # Clear the input fields after adding the process
             st.session_state.new_process_title = ""
             st.session_state.new_process_content = ""
-            save_processes_data(st.session_state.processes_data)  # Save changes
             st.success("New process added successfully!")
             st.experimental_rerun()
         else:
